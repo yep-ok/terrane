@@ -52,6 +52,7 @@ export function resolveSelection(map = activeMap()): { groups: SelGroup[]; locke
 const quoteList = (names: string[]) => names.map((n) => `"${n}"`).join(', ');
 
 export function lockedMessage(locked: LayerRef[]): string {
+  if (!locked.length) return 'Select one or more features in an editable layer first.';
   const names = quoteList(locked.map((l) => l.layer.name));
   return `${names} ${locked.length === 1 ? 'is' : 'are'} not editable. Turn on editing for the layer in the Create Features pane or its layer properties.`;
 }

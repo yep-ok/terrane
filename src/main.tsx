@@ -5,8 +5,9 @@ import { registerCore, registerPaneCommands } from './app/commands';
 import { registerFeatures } from './features';
 import { startup } from './features/io';
 import { getPane, openPane } from './core/registry';
-import { useProject } from './core/store';
-import { pruneLayerState, pruneViews, useUi } from './core/ui';
+import { findLayer, useProject } from './core/store';
+import { subscribeData } from './core/data';
+import { pruneLayerState, pruneViews, setSelection, useUi } from './core/ui';
 
 registerCore();
 registerFeatures();
@@ -17,6 +18,16 @@ useProject.subscribe((s, prev) => {
   if (s.project.maps !== prev.project.maps || s.project.layouts !== prev.project.layouts || s.project.charts !== prev.project.charts) {
     pruneViews();
     pruneLayerState();
+  }
+});
+
+// Deleted features must not linger in the selection.
+subscribeData((e) => {
+  if (e.type !== 'edit' || !e.deletes.length) return;
+  const gone = new Set(e.deletes);
+  for (const [layerId, ids] of Object.entries(useUi.getState().selection)) {
+    const layer = findLayer(layerId)?.layer;
+    if (layer?.kind === 'feature' && layer.datasetId === e.datasetId && ids.some((i) => gone.has(i))) setSelection(layerId, ids.filter((i) => !gone.has(i)));
   }
 });
 

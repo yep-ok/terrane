@@ -25,7 +25,7 @@ import type OlGeometry from 'ol/geom/Geometry';
 import type { Geometry } from 'geojson';
 
 import type { Dataset, Extent, Feat, FeatureLayer, Id, Layer, MapDoc, TileSource, ViewState } from '../core/types';
-import { datasetExtent, featureById, featuresExtent, getBlob, getDataset, subscribeData, type DataEvent } from '../core/data';
+import { splitAtAntimeridian, unwrapGeometry, datasetExtent, featureById, featuresExtent, getBlob, getDataset, subscribeData, type DataEvent } from '../core/data';
 import { isLayerVisible, setView, useProject } from '../core/store';
 import { useUi } from '../core/ui';
 import { ensureCrs, ensureCrsSync, isCrsRegistered } from '../core/crs';
@@ -340,11 +340,16 @@ export class MapRuntime implements MapHandle {
     return null;
   }
 
+  /** Geometry as it should be drawn: continuous (or cut) across the antimeridian. */
+  private displayGeometry(g: Geometry): Geometry {
+    return this.crs === 'EPSG:3857' || this.crs === 'EPSG:4326' ? unwrapGeometry(g) : splitAtAntimeridian(g);
+  }
+
   private toOl(feat: Feat, layerId: Id): OlFeature {
     const f = new OlFeature();
     if (feat.geometry) {
       try {
-        f.setGeometry(geojson.readGeometry(feat.geometry, { dataProjection: 'EPSG:4326', featureProjection: this.crs }));
+        f.setGeometry(geojson.readGeometry(this.displayGeometry(feat.geometry), { dataProjection: 'EPSG:4326', featureProjection: this.crs }));
       } catch {}
     }
     f.setId(feat.id);
@@ -419,7 +424,7 @@ export class MapRuntime implements MapHandle {
             const prev: Feat | undefined = existing.get('feat');
             existing.set('feat', feat, true);
             if (!prev || prev.geometry !== feat.geometry) {
-              existing.setGeometry(feat.geometry ? geojson.readGeometry(feat.geometry, { dataProjection: 'EPSG:4326', featureProjection: this.crs }) : undefined);
+              existing.setGeometry(feat.geometry ? geojson.readGeometry(this.displayGeometry(feat.geometry), { dataProjection: 'EPSG:4326', featureProjection: this.crs }) : undefined);
             } else existing.changed();
           } else src.addFeature(this.toOl(feat, layer.id));
         }

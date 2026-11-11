@@ -3,6 +3,7 @@
 import { useSyncExternalStore } from 'react';
 import type { Feature, Geometry, Position } from 'geojson';
 import type { Dataset, Extent, Feat, Field, FieldType, GeomType, Id } from './types';
+import { bboxClip } from '@turf/turf';
 import { pushUndo, transaction, withoutHistory } from './history';
 
 export type DataEvent =
@@ -80,6 +81,68 @@ export function featuresExtent(features: Iterable<{ geometry: Geometry | null }>
   const e: Extent = [Infinity, Infinity, -Infinity, -Infinity];
   for (const f of features) geometryExtent(f.geometry, e);
   return e[0] === Infinity ? null : e;
+}
+
+/**
+ * Display helper: make coordinate sequences continuous across the antimeridian.
+ * A jump of more than 180° of longitude between consecutive vertices is treated as
+ * a wrap, so the shape is drawn the short way round instead of as a band across the
+ * map. Returns the same object when nothing needs to change.
+ */
+export function unwrapGeometry<T extends Geometry | null | undefined>(g: T): T {
+  if (!g || g.type === 'Point' || g.type === 'MultiPoint') return g;
+  if (g.type === 'GeometryCollection') return { ...g, geometries: g.geometries.map((x) => unwrapGeometry(x)) } as T;
+  let changed = false;
+  const line = (pts: Position[]): Position[] => {
+    let offset = 0;
+    let out: Position[] | null = null;
+    for (let i = 1; i < pts.length; i++) {
+      const d = pts[i][0] - pts[i - 1][0];
+      if (d > 180) offset -= 360;
+      else if (d < -180) offset += 360;
+      if (offset) {
+        out ??= pts.slice(0, i);
+        out.push([pts[i][0] + offset, ...pts[i].slice(1)]);
+      } else if (out) out.push(pts[i]);
+    }
+    if (out) changed = true;
+    return out ?? pts;
+  };
+  let coordinates: any;
+  if (g.type === 'LineString') coordinates = line(g.coordinates);
+  else if (g.type === 'MultiLineString' || g.type === 'Polygon') coordinates = g.coordinates.map(line);
+  else coordinates = g.coordinates.map((poly) => poly.map(line));
+  return changed ? ({ ...g, coordinates } as T) : g;
+}
+
+/**
+ * Display helper for projections that cannot draw past ±180° (anything but Mercator /
+ * plate carrée): cut shapes that cross the antimeridian into a part on each side.
+ * Returns the same object when the shape does not cross.
+ */
+export function splitAtAntimeridian<T extends Geometry | null | undefined>(g: T): T {
+  const u = unwrapGeometry(g);
+  if (!u || u.type === 'Point' || u.type === 'MultiPoint' || u.type === 'GeometryCollection') return g;
+  const ext = geometryExtent(u);
+  if (!ext || (ext[0] >= -180 && ext[2] <= 180)) return g;
+  const shift = (geom: any, dx: number): any => {
+    const walk = (c: any): any => (typeof c[0] === 'number' ? [c[0] + dx, ...c.slice(1)] : c.map(walk));
+    return { ...geom, coordinates: walk(geom.coordinates) };
+  };
+  const parts: any[] = [];
+  const isPoly = u.type === 'Polygon' || u.type === 'MultiPolygon';
+  for (const [lo, hi, dx] of [[-540, -180, 360], [-180, 180, 0], [180, 540, -360]] as const) {
+    if (ext[2] <= lo || ext[0] >= hi) continue;
+    try {
+      const clipped = bboxClip(u as any, [lo, -90, hi, 90]).geometry as any;
+      if (!clipped?.coordinates?.length) continue;
+      const moved = dx ? shift(clipped, dx) : clipped;
+      const single = moved.type === 'Polygon' || moved.type === 'LineString';
+      for (const c of single ? [moved.coordinates] : moved.coordinates) if (c.length) parts.push(c);
+    } catch {}
+  }
+  if (!parts.length) return g;
+  return { type: isPoly ? 'MultiPolygon' : 'MultiLineString', coordinates: parts } as T;
 }
 
 /** Split an arbitrary feature list into one list per geometry family (key 'Table' for null geometry). */

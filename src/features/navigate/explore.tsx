@@ -50,6 +50,8 @@ export function showIdentify(handle: MapHandle, coordinate: Coordinate, hits: Hi
   const root = createRoot(el);
   popups.set(handle, { overlay, root });
   root.render(<IdentifyCard handle={handle} hits={hits} onClose={() => closeIdentify(handle)} />);
+  // The card has no size until React has rendered it, so pan it into view afterwards.
+  setTimeout(() => popups.get(handle)?.overlay === overlay && overlay.panIntoView({ animation: { duration: 220 }, margin: 24 }), 80);
 }
 
 /** Hit-test a pixel and show the pop-up (or close it when nothing is there). */

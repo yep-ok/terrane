@@ -262,6 +262,33 @@ export function isLayerVisible(map: MapDoc, layer: Layer): boolean {
   return true;
 }
 
+/** After a field is renamed, repoint renderers, label expressions and definition queries that use it. */
+export function renameFieldRefs(datasetId: Id, oldName: string, newName: string) {
+  if (oldName === newName) return;
+  const esc = oldName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const bare = /^[A-Za-z_][A-Za-z0-9_]*$/.test(oldName) ? new RegExp(`(?<![\\w$.'"])${esc}(?![\\w(])`, 'g') : null;
+  const bracket = new RegExp(`\\[${esc}\\]`, 'g');
+  const fix = (expr: string | undefined) => {
+    if (!expr) return expr;
+    let out = expr.replace(bracket, () => fieldRef(newName));
+    if (bare) out = out.replace(bare, () => fieldRef(newName));
+    return out;
+  };
+  set((p) => {
+    for (const m of p.maps)
+      for (const l of m.layers) {
+        if (l.kind !== 'feature' || l.datasetId !== datasetId) continue;
+        const r: any = l.renderer;
+        if (r.field === oldName) r.field = newName;
+        if (r.normalization === oldName) r.normalization = newName;
+        l.labels.expression = fix(l.labels.expression) ?? '';
+        l.definitionQuery = fix(l.definitionQuery);
+        if (l.popup?.fields) l.popup.fields = l.popup.fields.map((f) => (f === oldName ? newName : f));
+        if (l.popup?.title) l.popup.title = fix(l.popup.title);
+      }
+  });
+}
+
 // ---------- layouts & charts ----------
 
 export function addLayout(patch: Partial<LayoutDoc> = {}): LayoutDoc {

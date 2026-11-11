@@ -145,6 +145,32 @@ function interiorPoint(f: FeatureLike): Geometry | undefined {
   return p;
 }
 
+const labelPointCache = new WeakMap<object, Geometry>();
+/** Label anchor for a polygon feature: an interior point of its largest part. */
+function labelPoint(f: FeatureLike): Geometry | undefined {
+  const g = (f as Feature).getGeometry?.();
+  if (!g) return undefined;
+  let p = labelPointCache.get(g);
+  if (!p) {
+    const t = g.getType();
+    if (t === 'Polygon') p = (g as Polygon).getInteriorPoint();
+    else if (t === 'MultiPolygon') {
+      let best: Polygon | undefined;
+      let bestArea = -1;
+      for (const poly of (g as MultiPolygon).getPolygons()) {
+        const a = poly.getArea();
+        if (a > bestArea) {
+          bestArea = a;
+          best = poly;
+        }
+      }
+      p = best?.getInteriorPoint();
+    }
+    if (p) labelPointCache.set(g, p);
+  }
+  return p;
+}
+
 /** Style for one symbol, with the shared label Text attached when labelling is on. */
 function classStyle(sym: SymbolDef, geom: GeomType | null, text: Text | undefined): Style {
   const s = symbolToStyle(sym, geom);
@@ -171,13 +197,24 @@ export function makeStyleFunction(layer: FeatureLayer, ds: Dataset): FeatStyleFn
 
   const markerSize = r.type === 'proportional' ? r.maxSize : symbolForRenderer(layer)?.size ?? 5;
   const label = makeLabelEngine(layer.labels, geom, markerSize);
-  const text = label?.text;
+  // Polygons get their label from a separate style anchored inside the largest part,
+  // so a multipart feature (an archipelago, say) is labelled once rather than per part.
+  const polyLabel = label && geom === 'Polygon' ? new Style({ text: label.text, geometry: labelPoint }) : null;
+  const text = polyLabel ? undefined : label?.text;
+  const withLabel = new WeakMap<object, Style[]>();
   const wrap = (fn: (f: FeatureLike, res: number) => Style | Style[] | undefined): FeatStyleFn =>
     label
       ? (f, res) => {
           const s = fn(f, res);
-          if (s) label.apply(f, res);
-          return s;
+          if (!s) return s;
+          label.apply(f, res);
+          if (!polyLabel) return s;
+          let out = withLabel.get(s);
+          if (!out) {
+            out = Array.isArray(s) ? [...s, polyLabel] : [s, polyLabel];
+            withLabel.set(s, out);
+          }
+          return out;
         }
       : fn;
 

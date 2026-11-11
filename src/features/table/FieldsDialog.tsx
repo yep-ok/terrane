@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import { Plus, RotateCcw, Trash2 } from 'lucide-react';
 import type { FieldType } from '../../core/types';
 import { addField, deleteField, transaction, updateField, useDataset } from '../../core/data';
-import { useLayer } from '../../core/store';
+import { renameFieldRefs, useLayer } from '../../core/store';
 import { notify } from '../../core/ui';
 import { Button, Empty, IconButton, Select, TextInput } from '../../ui/kit';
 import { FieldTypeIcon, TYPE_OPTIONS } from './shared';
@@ -78,6 +78,7 @@ export function FieldsDialog({ props, close }: { props: { layerId?: string; addN
           const name = r.name.trim();
           const alias = r.alias.trim() || undefined;
           if (now !== name || alias !== (r.origAlias || undefined) || r.type !== r.origType) updateField(ds.id, now, { name, alias, type: r.type });
+          if (r.orig !== null && r.orig !== name) renameFieldRefs(ds.id, r.orig, name);
         }
         for (const r of rows) {
           if (r.deleted || r.orig !== null || !r.name.trim()) continue;

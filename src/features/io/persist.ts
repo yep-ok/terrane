@@ -185,7 +185,7 @@ export async function saveProject(forceDialog = false): Promise<boolean> {
       handle = await (window as any).showSaveFilePicker({ suggestedName: `${name}.terrane`, types: PICKER_TYPES });
     } catch (e: any) {
       if (e?.name === 'AbortError') return false;
-      throw e;
+      handle = null; // picker unavailable (e.g. no user gesture, sandboxed frame): fall back to a download
     }
   }
   setBusy('Saving project…');
