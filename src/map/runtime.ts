@@ -234,6 +234,11 @@ export class MapRuntime implements MapHandle {
       if (this.basemapLayer) this.map.removeLayer(this.basemapLayer);
       const bm = getBasemap(doc.basemap);
       this.basemapLayer = bm ? new TileLayer({ source: createTileSource(bm.source), zIndex: -1, properties: { role: 'basemap' } }) : null;
+      if (this.basemapLayer && bm?.filter) {
+        const filter = bm.filter;
+        this.basemapLayer.on('prerender', (e) => { (e.context as CanvasRenderingContext2D).filter = filter; });
+        this.basemapLayer.on('postrender', (e) => { (e.context as CanvasRenderingContext2D).filter = 'none'; });
+      }
       if (this.basemapLayer) this.map.addLayer(this.basemapLayer);
     }
 

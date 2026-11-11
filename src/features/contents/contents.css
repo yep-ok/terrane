@@ -1,0 +1,75 @@
+/* Contents pane + layer/map dialogs (classes prefixed ct-). Colours come from the shared tokens. */
+.ct-pane { display: flex; flex-direction: column; height: 100%; min-height: 0; outline: none; }
+.ct-header { display: flex; align-items: center; gap: 6px; padding: 3px 4px 3px 8px; border-bottom: 1px solid var(--border); flex: none; min-height: 30px; }
+.ct-mapicon { color: var(--accent-hover); flex: none; }
+.ct-mapname { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: default; }
+.ct-modes { display: flex; gap: 1px; flex: none; }
+.ct-subbar { display: flex; align-items: center; gap: 6px; padding: 2px 8px; border-bottom: 1px solid var(--border); flex: none; min-height: 26px; font-size: 11.5px; }
+.ct-subbar .btn { height: 20px; padding: 0 6px; }
+
+.ct-list { display: flex; flex-direction: column; padding: 2px 0 0; }
+.ct-fill { flex: 1; min-height: 36px; position: relative; }
+.ct-fill.drop-end::before { content: ''; position: absolute; left: 8px; right: 8px; top: 0; height: 2px; background: var(--accent); border-radius: 1px; }
+.ct-fill .empty { height: auto; padding-top: 36px; }
+.ct-note { padding: 14px; color: var(--text-dim); text-align: center; }
+
+.ct-item { position: relative; }
+.ct-item.dragging { opacity: 0.4; }
+.ct-row { display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 6px 0 4px; cursor: default; white-space: nowrap; border: 1px solid transparent; border-left: none; border-right: none; }
+.ct-row:hover { background: var(--hover); }
+.ct-row.selected { background: var(--active); }
+.ct-row.active { background: var(--active); border-color: var(--accent); }
+.ct-row.dim .ct-name, .ct-row.dim .ct-icon { opacity: 0.5; }
+.ct-row.dim .ct-check { opacity: 0.55; }
+.ct-chev { width: 15px; height: 18px; flex: none; display: grid; place-items: center; background: none; border: none; padding: 0; color: var(--text-dim); border-radius: 3px; cursor: pointer; }
+button.ct-chev:hover { background: var(--hover); color: var(--text); }
+.ct-check { margin: 0 1px 0 0; flex: none; accent-color: var(--accent); cursor: pointer; }
+.ct-check.mode { accent-color: var(--success); }
+.ct-check-spacer { width: 14px; flex: none; }
+.ct-icon { flex: none; color: var(--text-dim); }
+.ct-name { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.ct-count { flex: none; color: var(--text-faint); font-size: 11px; font-variant-numeric: tabular-nums; }
+.ct-badge { flex: none; min-width: 18px; padding: 0 5px; height: 15px; line-height: 15px; border-radius: 8px; background: var(--selection); color: #00232a; font-size: 10.5px; font-weight: 600; text-align: center; font-variant-numeric: tabular-nums; }
+.ct-edit { flex: 1; min-width: 0; height: 18px; padding: 0 4px; background: var(--bg-3); border: 1px solid var(--accent); border-radius: 2px; outline: none; user-select: text; }
+.ct-mapedit { height: 22px; font-weight: 600; }
+
+/* drop indicators (line indented to the target's depth) */
+.ct-item.drop-before::before, .ct-item.drop-after::after { content: ''; position: absolute; left: calc(var(--ct-depth, 0) * 14px + 8px); right: 6px; height: 2px; background: var(--accent); border-radius: 1px; z-index: 2; pointer-events: none; }
+.ct-item.drop-before::before { top: -1px; }
+.ct-item.drop-after::after { bottom: -1px; }
+.ct-item.drop-inside > .ct-row { background: var(--active); outline: 1px solid var(--accent); outline-offset: -1px; }
+
+/* legend */
+.ct-legend { padding-right: 8px; padding-bottom: 3px; display: flex; flex-direction: column; align-items: flex-start; }
+.ct-legend-head { color: var(--text-faint); font-size: 11px; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 1px 0; }
+.ct-legend-item { display: flex; align-items: center; gap: 6px; max-width: 100%; height: 18px; padding: 0 3px 0 0; background: none; border: none; border-radius: 3px; cursor: pointer; text-align: left; }
+.ct-legend-item:hover { background: var(--hover); }
+.ct-legend-label { color: var(--text-dim); font-size: 11.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
+.ct-legend-more { color: var(--text-faint); font-size: 11px; padding: 1px 0 0 2px; }
+.ct-gradient { width: 150px; max-width: 100%; height: 11px; border: 1px solid var(--border-strong); border-radius: 2px; padding: 0; cursor: pointer; margin: 2px 0 1px; }
+.ct-gradient-labels { display: flex; justify-content: space-between; width: 150px; max-width: 100%; color: var(--text-faint); font-size: 10.5px; }
+
+.ct-source-head { display: flex; align-items: center; gap: 6px; height: 22px; padding: 0 8px; margin-top: 3px; font-weight: 600; color: var(--text-dim); background: var(--bg); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.ct-source-head:first-child { margin-top: 0; }
+
+.ct-basemap { display: flex; align-items: center; gap: 6px; height: 26px; padding: 0 8px; flex: none; background: var(--bg); border: none; border-top: 1px solid var(--border); cursor: pointer; text-align: left; width: 100%; }
+.ct-basemap:hover { background: var(--hover); }
+.ct-basemap svg { color: var(--text-dim); flex: none; }
+
+/* dialogs */
+.ct-dlg-body { min-width: 500px; min-height: 330px; max-height: 70vh; }
+.ct-kv { display: grid; grid-template-columns: 130px 1fr; gap: 5px 10px; align-items: start; }
+.ct-k { color: var(--text-dim); }
+.ct-v { min-width: 0; overflow-wrap: anywhere; }
+.ct-wrap { word-break: break-all; }
+.ct-crs { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ct-subtitle { font-weight: 600; margin: 12px 0 5px; }
+.ct-fields { max-height: 170px; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-3); }
+.ct-fields.tall { max-height: 200px; }
+.ct-fields table { width: 100%; border-collapse: collapse; }
+.ct-fields th { position: sticky; top: 0; background: var(--bg-4); text-align: left; font-weight: 600; padding: 3px 8px; border-bottom: 1px solid var(--border); }
+.ct-fields td { padding: 2px 8px; border-bottom: 1px solid var(--border); user-select: text; }
+.ct-fieldrow { display: flex; align-items: center; gap: 2px; padding: 1px 6px; border-bottom: 1px solid var(--border); }
+.ct-fieldrow:last-child { border-bottom: none; }
+.ct-ops { display: flex; flex-wrap: wrap; gap: 4px; }
+.ct-ops .btn { height: 22px; padding: 0 8px; font-family: var(--mono); font-size: 11px; }

@@ -1,0 +1,70 @@
+/* Charts module. All colours come from the design tokens so both themes read well. */
+.chartview { display: flex; flex-direction: column; width: 100%; height: 100%; background: var(--bg-2); }
+.chart-toolbar { display: flex; align-items: center; gap: 2px; padding: 3px 8px; border-bottom: 1px solid var(--border); min-height: 30px; flex: none; }
+.chart-name { display: inline-flex; align-items: center; gap: 6px; max-width: 280px; padding: 2px 6px; background: none; border: 1px solid transparent; border-radius: var(--radius); color: var(--text); font-weight: 600; cursor: pointer; }
+.chart-name span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chart-name svg { opacity: 0.45; flex: none; }
+.chart-name:hover { background: var(--hover); border-color: var(--border); }
+.chart-name:hover svg { opacity: 0.9; }
+.chart-rename { display: flex; align-items: center; gap: 4px; width: 260px; }
+.chart-sep { width: 1px; height: 16px; background: var(--border); margin: 0 5px; flex: none; }
+.chart-spacer { flex: 1; }
+.chart-status { display: inline-flex; align-items: center; gap: 2px; color: var(--text-dim); font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.chart-selcount { color: var(--text); font-weight: 600; }
+.chart-clear { display: inline-grid; place-items: center; width: 16px; height: 16px; margin-left: 4px; background: none; border: none; border-radius: 3px; color: var(--text-dim); cursor: pointer; padding: 0; }
+.chart-clear:hover { background: var(--hover); color: var(--text); }
+.chart-banner { display: flex; align-items: center; gap: 6px; padding: 4px 10px; background: color-mix(in srgb, var(--warning) 16%, transparent); border-bottom: 1px solid var(--border); color: var(--text); flex: none; }
+.chart-banner svg { color: var(--warning); flex: none; }
+.chart-area { flex: 1; min-height: 0; position: relative; overflow: hidden; }
+.chart-area > .empty { position: absolute; inset: 0; }
+.chart-notes { padding: 3px 10px; border-top: 1px solid var(--border); color: var(--text-faint); font-size: 11px; flex: none; }
+.chart-tip { position: absolute; z-index: 5; pointer-events: none; background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: 4px; box-shadow: var(--shadow); padding: 5px 8px; font-size: 11.5px; white-space: nowrap; max-width: 280px; }
+.chart-tip-title { font-weight: 600; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; }
+.chart-tip-row { color: var(--text-dim); font-variant-numeric: tabular-nums; }
+
+/* ---- the chart itself ---- */
+.tc-svg { display: block; font-family: var(--font); user-select: none; }
+.tc-bg { fill: transparent; }
+.tc-title { fill: var(--text); font-size: 13px; font-weight: 600; }
+.tc-axis-title { fill: var(--text-dim); font-size: 11.5px; }
+.tc-tick { fill: var(--text-dim); font-size: 11px; }
+.tc-axis { stroke: var(--border-strong); stroke-width: 1; fill: none; shape-rendering: crispEdges; }
+.tc-grid { stroke: var(--border); stroke-width: 1; opacity: 0.85; shape-rendering: crispEdges; }
+.tc-zero { stroke: var(--text-dim); stroke-width: 1; shape-rendering: crispEdges; }
+.tc-clickable { cursor: pointer; }
+text.tc-clickable:hover { fill: var(--text); }
+.tc-mark { cursor: pointer; }
+.tc-mark:hover { filter: brightness(1.14); }
+.tc-sel-fill { fill: var(--selection); stroke: none; pointer-events: none; }
+.tc-sel-stroke { stroke: var(--selection); stroke-width: 2.5; pointer-events: none; }
+.tc-mean { fill: var(--bg-2); stroke: var(--text); stroke-width: 1.2; }
+.tc-outlier.sel { fill: var(--selection); stroke: var(--text); stroke-width: 1; }
+.tc-pt { stroke: var(--bg-2); stroke-width: 0.6; }
+.tc-pt.sel { stroke: var(--selection); stroke-width: 2; }
+.tc-pt-line { stroke: var(--bg-2); stroke-width: 1; }
+.tc-trend { stroke: var(--text); stroke-width: 1.5; stroke-dasharray: 6 4; opacity: 0.8; fill: none; }
+.tc-badge { fill: var(--bg-2); stroke: var(--border-strong); opacity: 0.94; }
+.tc-badge-text { fill: var(--text); font-size: 11px; font-family: var(--mono); }
+.tc-brush { fill: var(--selection); fill-opacity: 0.15; stroke: var(--selection); stroke-width: 1; stroke-dasharray: 4 2; }
+.tc-surface { fill: transparent; cursor: crosshair; touch-action: none; }
+.tc-guide { stroke: var(--text-faint); stroke-dasharray: 3 3; }
+.tc-hover-dot { stroke: var(--bg-2); stroke-width: 2; }
+.tc-legend-title { fill: var(--text); font-size: 11px; font-weight: 600; }
+.tc-legend-text { fill: var(--text); font-size: 11px; }
+.tc-legend-detail { fill: var(--text-dim); font-size: 11px; }
+.tc-datalabel { fill: var(--text-dim); font-size: 10.5px; }
+.tc-slice { stroke: var(--bg-2); stroke-width: 1.2; }
+.tc-slice-label { fill: #fff; font-size: 11px; font-weight: 600; paint-order: stroke; stroke: rgba(0, 0, 0, 0.5); stroke-width: 2.5px; stroke-linejoin: round; pointer-events: none; }
+.tc-center-value { fill: var(--text); font-size: 16px; font-weight: 600; }
+.tc-std-band { opacity: 0.14; pointer-events: none; }
+
+/* ---- properties pane ---- */
+.chart-types { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4px; }
+.chart-type { display: flex; flex-direction: column; align-items: center; gap: 3px; padding: 6px 2px 5px; background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-dim); font-size: 11px; cursor: pointer; }
+.chart-type:hover { background: var(--bg-4); color: var(--text); }
+.chart-type.active { background: var(--active); border-color: var(--accent); color: var(--text); }
+.chart-checks { display: flex; flex-direction: column; gap: 5px; margin: 4px 0 2px; }
+.chart-label { color: var(--text-dim); margin-bottom: 3px; }
+.chart-hint { color: var(--text-faint); font-size: 11px; }
+.chart-fieldlist { display: flex; flex-direction: column; gap: 4px; max-height: 130px; overflow: auto; padding: 5px 7px; background: var(--bg-3); border: 1px solid var(--border); border-radius: var(--radius); }
+.chart-ramp { display: inline-block; width: 70px; height: 14px; border: 1px solid var(--border-strong); border-radius: 2px; flex: none; }

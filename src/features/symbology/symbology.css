@@ -1,0 +1,79 @@
+/* Symbology module. Classes are prefixed sy-. Colours come from the global tokens. */
+.sy-pane .pane-body { padding: 0; }
+.sy-head { padding: 8px 10px; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; }
+.sy-layername { display: flex; align-items: center; gap: 6px; font-weight: 600; overflow: hidden; }
+.sy-layername span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.sy-layername .sub { font-weight: 400; color: var(--text-faint); font-size: 11px; flex: none; }
+.sy-body { padding: 8px 10px 14px; }
+.sy-body .row { grid-template-columns: 92px 1fr; margin-bottom: 6px; }
+.sy-sub { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-faint); margin: 10px 0 6px; display: flex; align-items: center; gap: 6px; }
+.sy-sub .grow { height: 1px; background: var(--border); }
+.sy-note { color: var(--text-faint); font-size: 11px; margin: 4px 0; }
+.sy-warn { color: var(--warning); font-size: 11px; margin: 4px 0; }
+
+.sy-editor { display: flex; flex-direction: column; }
+.sy-preview { display: grid; place-items: center; height: 46px; margin-bottom: 8px; border: 1px solid var(--border); border-radius: var(--radius); background: repeating-conic-gradient(var(--bg-4) 0% 25%, var(--bg-3) 0% 50%) 0 0 / 10px 10px; }
+.sy-colorfield { display: inline-flex; align-items: center; gap: 6px; }
+.sy-hex { width: 74px; font-family: var(--mono); font-size: 11px; text-transform: lowercase; }
+.sy-num { width: 64px; }
+.sy-shapes { display: flex; gap: 2px; flex-wrap: wrap; }
+.sy-shape { display: grid; place-items: center; width: 26px; height: 24px; padding: 0; background: var(--bg-3); border: 1px solid var(--border-strong); border-radius: var(--radius); color: var(--text-dim); cursor: pointer; }
+.sy-shape:hover { background: var(--bg-4); color: var(--text); }
+.sy-shape.on { background: var(--active); border-color: var(--accent); color: var(--text); }
+
+.sy-ramp { position: relative; width: 100%; }
+.sy-ramp-btn { display: flex; align-items: center; gap: 6px; width: 100%; height: 24px; padding: 0 6px; background: var(--bg-3); border: 1px solid var(--border-strong); border-radius: var(--radius); cursor: pointer; color: var(--text-dim); }
+.sy-ramp-btn:hover { background: var(--bg-4); }
+.sy-ramp-btn .sy-rampbar { flex: 1; }
+.sy-rampbar { display: block; border-radius: 2px; min-width: 40px; box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.35); }
+.sy-ramp-pop { position: absolute; z-index: 30; left: 0; right: 0; top: 27px; max-height: 300px; overflow-y: auto; background: var(--bg-2); border: 1px solid var(--border-strong); border-radius: 5px; box-shadow: var(--shadow); padding: 4px; }
+.sy-ramp-group { padding: 5px 6px 2px; font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-faint); }
+.sy-ramp-item { display: grid; grid-template-columns: 1fr 96px; align-items: center; gap: 8px; width: 100%; padding: 3px 6px; background: none; border: none; border-radius: 3px; cursor: pointer; text-align: left; }
+.sy-ramp-item > .sy-rampbar { grid-column: 1; grid-row: 1; }
+.sy-ramp-item > span:last-child { grid-column: 2; grid-row: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--text-dim); font-size: 11px; }
+.sy-ramp-item:hover { background: var(--active); }
+.sy-ramp-item.sel { box-shadow: inset 2px 0 0 var(--accent); }
+
+.sy-classes { border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.sy-classes-head { display: flex; align-items: center; gap: 6px; padding: 3px 6px; border-bottom: 1px solid var(--border); color: var(--text-faint); font-size: 11px; }
+.sy-classes-list { max-height: 360px; overflow-y: auto; }
+.sy-class { border-bottom: 1px solid var(--border); }
+.sy-class:last-child { border-bottom: none; }
+.sy-class-row { display: flex; align-items: center; gap: 6px; padding: 3px 6px; min-height: 28px; }
+.sy-class-row:hover { background: var(--hover); }
+.sy-class-row.off { opacity: 0.5; }
+.sy-swatch { display: grid; place-items: center; padding: 1px; background: none; border: 1px solid transparent; border-radius: var(--radius); cursor: pointer; flex: none; }
+.sy-swatch:hover, .sy-swatch.open { border-color: var(--accent); background: var(--hover); }
+.sy-class-label { flex: 1; min-width: 0; height: 22px; padding: 0 5px; background: transparent; border: 1px solid transparent; border-radius: var(--radius); outline: none; user-select: text; }
+.sy-class-label:hover { border-color: var(--border); }
+.sy-class-label:focus { border-color: var(--accent); background: var(--bg-3); }
+.sy-count { color: var(--text-faint); font-size: 11px; font-variant-numeric: tabular-nums; min-width: 32px; text-align: right; flex: none; }
+.sy-class-edit { padding: 8px 10px 4px 12px; background: var(--bg-2); border-top: 1px dashed var(--border); }
+.sy-class-edit .row { grid-template-columns: 86px 1fr; }
+.sy-bound { display: flex; align-items: center; gap: 4px; flex: none; color: var(--text-faint); font-size: 11px; }
+.sy-bound .sy-num { width: 78px; }
+.sy-other { display: flex; align-items: center; gap: 6px; padding: 3px 6px; min-height: 28px; border-top: 1px solid var(--border); background: var(--bg-2); }
+.sy-other .grow { color: var(--text-dim); }
+
+.sy-hist { display: block; width: 100%; height: 70px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); }
+.sy-hist .bar { opacity: 0.9; }
+.sy-hist .brk { stroke: var(--text); stroke-width: 1; stroke-dasharray: 3 2; opacity: 0.75; vector-effect: non-scaling-stroke; }
+.sy-hist-axis { display: flex; justify-content: space-between; color: var(--text-faint); font-size: 10.5px; margin-top: 2px; font-variant-numeric: tabular-nums; }
+
+.sy-legend-prev { display: flex; align-items: center; gap: 14px; padding: 6px 8px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); margin-bottom: 8px; }
+.sy-legend-prev .it { display: flex; align-items: center; gap: 6px; color: var(--text-dim); font-size: 11px; }
+
+.sy-expr-tools { display: flex; align-items: center; gap: 6px; margin: 4px 0 6px; }
+.sy-expr-status { font-size: 11px; margin-top: 4px; min-height: 16px; }
+.sy-expr-status.ok { color: var(--success); }
+.sy-expr-status.bad { color: var(--danger); }
+.sy-samples { margin-top: 4px; padding: 4px 6px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg); color: var(--text-dim); font-size: 11px; max-height: 64px; overflow: hidden; }
+.sy-samples div { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sy-label-sample { padding: 8px 10px; border: 1px solid var(--border); border-radius: var(--radius); background: #e8ecef; margin-bottom: 8px; text-align: center; }
+.sy-pair { display: flex; align-items: center; gap: 6px; }
+.sy-pair .lbl { color: var(--text-faint); font-size: 11px; }
+
+/* ribbon custom items */
+.sy-rb-opacity { display: flex; flex-direction: column; justify-content: center; gap: 2px; width: 168px; height: 68px; padding: 0 6px; }
+.sy-rb-opacity .lbl { font-size: 11px; color: var(--text-dim); }
+.sy-rb-opacity .slider .val { width: 34px; }

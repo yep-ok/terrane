@@ -1,2 +1,2 @@
 // symbology module entry point.
-export function register() {}
+export { register } from './register';

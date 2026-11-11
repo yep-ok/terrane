@@ -1,0 +1,81 @@
+/* Editing module (Create Features, Attributes, dialogs, map hint). */
+
+/* ---------- map hint ---------- */
+.editing-hint {
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%); z-index: 10;
+  max-width: calc(100% - 120px); padding: 4px 10px; border-radius: 12px;
+  background: var(--bg-2); color: var(--text); border: 1px solid var(--border-strong); box-shadow: var(--shadow);
+  font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; pointer-events: none; opacity: 0.94;
+}
+
+/* ---------- shared ---------- */
+.editing-pad { padding: 6px 2px; }
+.editing-ellipsis { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.editing-mono { font-family: var(--mono); font-size: 11px; }
+.editing-on { background: var(--active) !important; border-color: var(--accent) !important; }
+
+/* ---------- Create Features ---------- */
+.editing-search { position: relative; display: flex; align-items: center; }
+.editing-search > svg { position: absolute; left: 6px; color: var(--text-faint); pointer-events: none; }
+.editing-search .input { padding-left: 22px; height: 22px; }
+.editing-tgroup { border-bottom: 1px solid var(--border); padding-bottom: 3px; }
+.editing-tgroup-head {
+  display: flex; align-items: center; gap: 4px; width: 100%; padding: 5px 8px 3px; background: none; border: none;
+  text-align: left; cursor: pointer; font-weight: 600; color: var(--text);
+}
+.editing-tgroup-head:hover { background: var(--hover); }
+.editing-tgroup-head.static { cursor: default; color: var(--text-dim); }
+.editing-tgroup-head.static:hover { background: none; }
+.editing-tgroup-head .muted { font-weight: 400; font-size: 11px; }
+.editing-template {
+  display: flex; align-items: center; gap: 8px; width: 100%; height: 26px; padding: 0 10px 0 24px;
+  background: none; border: 1px solid transparent; text-align: left; cursor: pointer; color: var(--text);
+}
+.editing-template:hover { background: var(--hover); }
+.editing-template.selected { background: var(--active); }
+.editing-template.active { border-color: var(--accent); }
+.editing-locked-row { display: flex; align-items: center; gap: 6px; padding: 1px 6px 1px 24px; color: var(--text-dim); }
+.editing-locked-row .btn { height: 20px; padding: 0 6px; font-size: 11px; }
+.editing-locked-row .btn svg { width: 12px; height: 12px; }
+.editing-tools { flex: none; border-top: 1px solid var(--border); padding: 6px 8px 8px; background: var(--bg-2); }
+.editing-tools-title { display: flex; align-items: center; gap: 6px; font-weight: 600; margin-bottom: 4px; }
+.editing-tools-title .muted { font-weight: 400; max-width: 60%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.editing-tools-row { flex-wrap: wrap; gap: 3px; }
+.editing-tools-row .iconbtn { width: 28px; height: 26px; border-color: var(--border); }
+.editing-tools-row .iconbtn.active { border-color: var(--accent); }
+.editing-sides { margin-left: 6px; gap: 5px; }
+
+/* ---------- Attributes ---------- */
+.editing-attr-tree { flex: 0 1 auto; max-height: 38%; min-height: 54px; overflow: auto; border-bottom: 1px solid var(--border); padding: 2px 0; }
+.editing-tree-row { display: flex; align-items: center; gap: 4px; height: 22px; padding: 0 8px 0 26px; cursor: pointer; }
+.editing-tree-row.head { padding-left: 6px; font-weight: 600; }
+.editing-tree-row:hover { background: var(--hover); }
+.editing-tree-row.selected { background: var(--active); }
+.editing-twisty { display: grid; place-items: center; width: 16px; height: 16px; border-radius: 3px; flex: none; }
+.editing-twisty:hover { background: var(--hover); }
+.editing-count { font-weight: 400; font-size: 11px; color: var(--text-dim); background: var(--bg-3); border: 1px solid var(--border); border-radius: 8px; padding: 0 6px; line-height: 15px; }
+.editing-note { display: flex; align-items: center; gap: 6px; margin: 8px 8px 0; padding: 5px 8px; border: 1px solid var(--border); border-left: 3px solid var(--warning); border-radius: var(--radius); color: var(--text-dim); }
+.editing-grid { display: grid; grid-template-columns: minmax(80px, 38%) 1fr; align-items: center; column-gap: 8px; row-gap: 3px; padding: 8px 10px; }
+.editing-grid-label { color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.editing-grid-label.edited { color: var(--accent-hover); font-weight: 600; }
+.editing-grid-label.edited::after { content: ' •'; }
+.editing-grid-value { min-width: 0; min-height: 22px; display: flex; align-items: center; }
+.editing-grid-value .input { height: 22px; }
+.editing-grid-value input[type='date'].input { padding-right: 2px; }
+.editing-geom { border-top: 1px solid var(--border); margin-top: 4px; }
+.editing-geom-title { padding: 7px 10px 0; font-weight: 600; }
+
+/* ---------- dialogs ---------- */
+.editing-fields { border: 1px solid var(--border); border-radius: var(--radius); margin: 4px 0 10px; }
+.editing-fields-head { display: flex; align-items: center; justify-content: space-between; padding: 2px 4px 2px 8px; border-bottom: 1px solid var(--border); font-weight: 600; background: var(--bg); }
+.editing-fields .editing-pad { padding: 8px; }
+.editing-field-row { display: flex; align-items: center; gap: 6px; padding: 4px 6px; }
+.editing-field-row + .editing-field-row { border-top: 1px solid var(--border); }
+.editing-list { border: 1px solid var(--border); border-radius: var(--radius); max-height: 240px; overflow: auto; margin-bottom: 10px; }
+.editing-list-item { display: flex; align-items: center; gap: 8px; padding: 5px 8px; cursor: pointer; }
+.editing-list-item + .editing-list-item { border-top: 1px solid var(--border); }
+.editing-list-item:hover { background: var(--hover); }
+.editing-list-item.selected { background: var(--active); }
+.editing-list-item input { accent-color: var(--accent); margin: 0; }
+.editing-presets { gap: 2px; flex: none; }
+.editing-presets .btn { padding: 0 6px; }

@@ -76,7 +76,8 @@ button, input, select, textarea { font: inherit; color: inherit; }
 .ribbon-tab.active { color: var(--text); background: var(--bg-2); border-color: var(--border); position: relative; top: 1px; }
 .ribbon-tab.contextual { color: var(--accent-hover); }
 .ribbon-tab.contextual.active { box-shadow: inset 0 2px 0 var(--accent); }
-.ribbon-body { display: flex; height: 92px; padding: 4px 4px 0; overflow-x: auto; overflow-y: hidden; }
+.ribbon-body { display: flex; height: 92px; padding: 4px 4px 0; overflow-x: auto; overflow-y: hidden; scrollbar-width: none; }
+.ribbon-body::-webkit-scrollbar { display: none; }
 .ribbon-group { display: flex; flex-direction: column; padding: 0 6px; border-right: 1px solid var(--border); flex: none; }
 .ribbon-group:last-child { border-right: none; }
 .ribbon-group-items { display: flex; align-items: flex-start; gap: 2px; flex: 1; }

@@ -47,11 +47,11 @@ export function TextInput({
       spellCheck={false}
       onChange={(e) => onChange?.(e.target.value)}
       onBlur={(e) => onCommit?.(e.target.value)}
+      {...rest}
       onKeyDown={(e) => {
         if (e.key === 'Enter') onCommit?.((e.target as HTMLInputElement).value);
         rest.onKeyDown?.(e);
       }}
-      {...rest}
     />
   );
 }
